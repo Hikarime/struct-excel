@@ -50,8 +50,9 @@ def normalize_sheet(ws: Worksheet, err_ws: Worksheet) -> None:
 def _trim_cells(ws: Worksheet) -> Worksheet:
     for row in ws:
         for cell in row:
-            if cell.value != None and isinstance(cell.value, str):
-                cell.value = cell.value.strip()
+            if cell.value is not None and isinstance(cell.value, str):
+                value = re.sub(r"[\u200b\u200c\u200d\ufeff\u00ad]", "", cell.value)
+                cell.value = value.strip()
 
     return ws
 
