@@ -86,3 +86,11 @@ class RawRow:
     experience: str
     completed: str
     payment_status: str
+
+
+@dataclass
+class CourseParseResult:
+    datetime_range: list[tuple[datetime, datetime]]
+    mode: SessionMode
+    course_name: str
+    duration: float
