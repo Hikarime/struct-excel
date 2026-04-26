@@ -37,7 +37,6 @@ class Student:
 class Course:
     course_id: int
     course_name: str
-    duration: float
 
 
 @dataclass
@@ -47,6 +46,7 @@ class Session:
     start_datetime: datetime
     end_datetime: datetime
     mode: SessionMode
+    duration: float
 
 
 @dataclass

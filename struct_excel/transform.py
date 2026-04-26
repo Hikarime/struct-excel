@@ -56,6 +56,7 @@ def to_session(raw: list[RawRow], courses: list[Course]) -> list[Session]:
                 existed_course.course_id,
                 start,
                 end,
+                course_session.duration,
             )
             if dedup_key in seen:
                 continue
@@ -68,6 +69,7 @@ def to_session(raw: list[RawRow], courses: list[Course]) -> list[Session]:
                     start_datetime=start,
                     end_datetime=end,
                     mode=course_session.mode,
+                    duration=course_session.duration,
                 )
             )
             session_id += 1
