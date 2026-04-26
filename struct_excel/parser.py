@@ -1,14 +1,14 @@
 from datetime import datetime
 import calendar
 import re
-from models import CourseParseResult, SessionMode
+from struct_excel.models import CourseParseResult, SessionMode
 
 
 def parse_course_session(raw_course: str) -> CourseParseResult:
     if "|" not in raw_course:
         raise ValueError(f"parse {raw_course} failed: '|' not found")
 
-    left = raw_course.split("|")[0]
+    left = raw_course.split("|")[0].strip()
     right = raw_course.split("|")[1]
 
     course_name, duration = _parse_course_name_duration(right)

@@ -1,8 +1,13 @@
 et_xmlfile==2.0.0
+iniconfig==2.3.0
 numpy==2.4.4
 openpyxl==3.1.5
+packaging==26.2
 pandas==3.0.2
 phonenumbers==9.0.28
+pluggy==1.6.0
 pycountry==26.2.16
+Pygments==2.20.0
+pytest==9.0.3
 python-dateutil==2.9.0.post0
 six==1.17.0

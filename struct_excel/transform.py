@@ -3,8 +3,8 @@
 # and `enrollment`.
 
 import logging
-from models import Course, Enrollment, RawRow, Session, Student, Supervisor
-from parser import parse_course_session
+from struct_excel.models import Course, Enrollment, RawRow, Session, Student, Supervisor
+from struct_excel.parser import parse_course_session
 
 logger = logging.getLogger(__name__)
 
