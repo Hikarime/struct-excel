@@ -18,7 +18,21 @@ logger = logging.getLogger(__name__)
 
 
 def to_supervisor(raw: list[RawRow]) -> list[Supervisor]:
-    return []
+    sups: list[Supervisor] = []
+    seen = set()
+
+    for entry in raw:
+        email = entry.supervisor_email
+        name = entry.supervisor_name
+        if email is None or name is None or email == "" or name == "":
+            continue
+        if email in seen:
+            continue
+        seen.add(email)
+        sups.append(
+            Supervisor(supervisor_id=len(sups) + 1, full_name=name, email=email)
+        )
+    return sups
 
 
 def to_course(raw: list[RawRow]) -> list[Course]:
