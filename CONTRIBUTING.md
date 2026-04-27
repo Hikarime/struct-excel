@@ -53,21 +53,23 @@
    black .
    ```
 
-8. Commit changes
+8. Run tests (see [Testing](#testing))
+
+9. Commit changes
 
    The commit style should follow [Conventional Commits](https://www.conventionalcommits.org/).
 
-9. Push changes to forked repository
+10. Push changes to forked repository
 
-   ```bash
-   git push -u origin <branch-name>
-   ```
+    ```bash
+    git push -u origin <branch-name>
+    ```
 
-   > `<branch-name>` is the branch where your changes exist.
+    > `<branch-name>` is the branch where your changes exist.
 
-10. Create a pull request and wait for review and approval.
+11. Create a pull request and wait for review and approval.
 
-11. Delete the merged branch (optional)
+12. Delete the merged branch (optional)
 
 ## Branch Style
 
@@ -75,3 +77,26 @@
 - `fix/*`: For fixing bugs. For example, `fix/fix-error-type`.
 - `docs`: Document-related changes such as modifying `README`.
 - `refactor/*`: For refactoring code. For example, `refactor/normalize-phone-number`.
+
+## Testing
+
+All testing files are under the `tests/` folder.
+
+Run full testing:
+
+```bash
+pytest
+```
+
+Run specific testing:
+
+```bash
+pytest /path/to/test/file
+```
+
+E.g.
+
+```bash
+pytest ./tests/test_to_student.py
+pytest ./tests/test_to_supervisor.py
+```
