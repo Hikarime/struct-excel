@@ -30,7 +30,11 @@ class Student:
     experience_min_years: int
     experience_max_years: int
     sector: Sector
-    supervisor_id: int
+    supervisor_id: int | None
+    company: str
+    job_title: str | None
+    country: str
+    phone: str
 
 
 @dataclass
@@ -64,7 +68,7 @@ class Enrollment:
     reg_date: datetime
     completed: bool
     payment_status: str
-    exception: str
+    exception: str | None
 
 
 @dataclass
@@ -73,19 +77,19 @@ class RawRow:
     student_full_name: str
     student_email: str
     student_company: str
-    student_job_title: str
+    student_job_title: str | None
     country: str
-    exception: str
+    exception: str | None
     phone: str
     course: str
     gender: str
     sector: str
-    supervisor_name: str
-    supervisor_email: str
-    it_background: str
-    experience: str
-    completed: str
-    payment_status: str
+    supervisor_name: str | None
+    supervisor_email: str | None
+    it_background: str | None
+    experience: str | None
+    completed: str | None
+    payment_status: str | None
 
 
 @dataclass
