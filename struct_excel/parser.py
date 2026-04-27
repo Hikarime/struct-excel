@@ -1,7 +1,21 @@
 from datetime import datetime
 import calendar
 import re
-from struct_excel.models import CourseParseResult, SessionMode
+from struct_excel.models import CourseParseResult, PaymentStatus, SessionMode
+
+
+def parse_bool_schema(value: str | None) -> bool:
+    if value is None:
+        return False
+    return value.lower().strip() in ("yes", "true", "1")
+
+
+def parse_payment_status(value: str | None) -> PaymentStatus:
+    if value is None:
+        return PaymentStatus.PENDING
+    return (
+        PaymentStatus.PAID if value.upper().strip() == "PAID" else PaymentStatus.PENDING
+    )
 
 
 def parse_course_session(raw_course: str) -> CourseParseResult:

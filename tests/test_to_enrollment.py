@@ -94,6 +94,10 @@ def test_to_enrollment_deduplication():
             experience_max_years=5,
             sector=Sector.PRIVATE,
             supervisor_id=1,
+            company="company",
+            job_title=None,
+            country="MY",
+            phone="1234567890",
         ),
     ]
     courses = [
@@ -158,6 +162,10 @@ def test_to_enrollment_no_student_match():
             experience_max_years=5,
             sector=Sector.PRIVATE,
             supervisor_id=1,
+            company="company",
+            job_title=None,
+            country="MY",
+            phone="1234567890",
         ),
     ]
     courses = [

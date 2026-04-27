@@ -4,7 +4,11 @@
 
 import logging
 from struct_excel.models import Course, Enrollment, RawRow, Session, Student, Supervisor
-from struct_excel.parser import parse_course_session
+from struct_excel.parser import (
+    parse_bool_schema,
+    parse_course_session,
+    parse_payment_status,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -78,9 +82,79 @@ def to_session(raw: list[RawRow], courses: list[Course]) -> list[Session]:
 
 
 def to_enrollment(
-    raw: list[RawRow], students: list[Student], sessions: list[Session]
+    raw: list[RawRow],
+    students: list[Student],
+    courses: list[Course],
+    sessions: list[Session],
 ) -> list[Enrollment]:
-    return []
+    student_id_by_email = {student.email: student.student_id for student in students}
+    course_id_by_name = {course.course_name: course.course_id for course in courses}
+    session_id_by_course_session = {
+        (
+            session.course_id,
+            session.start_datetime,
+            session.end_datetime,
+            session.mode,
+        ): session.session_id
+        for session in sessions
+    }
+
+    seen = set()
+    enrollments: list[Enrollment] = []
+    for row in raw:
+        student_id = student_id_by_email.get(row.student_email)
+        if student_id is None:
+            logger.warning(f"can not find student id (email={row.student_email})")
+            continue
+
+        try:
+            course_session = parse_course_session(row.course)
+        except ValueError as e:
+            logger.warning(f"skip invalid enrollment: {row.course} err: {e}")
+            continue
+
+        course_id = course_id_by_name.get(course_session.course_name)
+        if course_id is None:
+            logger.warning(
+                f"can not find course id (course_name={course_session.course_name})"
+            )
+            continue
+
+        for start, end in course_session.datetime_range:
+            session_id = session_id_by_course_session.get(
+                (
+                    course_id,
+                    start,
+                    end,
+                    course_session.mode,
+                )
+            )
+            if session_id is None:
+                logger.warning(
+                    f"can not find session id (course_name={course_session.course_name})"
+                )
+                continue
+
+            dedup_key = (student_id, session_id)
+            if dedup_key in seen:
+                continue
+            seen.add(dedup_key)
+
+            completed = parse_bool_schema(row.completed)
+            payment_status = parse_payment_status(row.payment_status)
+            enrollments.append(
+                Enrollment(
+                    enrollment_id=len(enrollments) + 1,
+                    student_id=student_id,
+                    session_id=session_id,
+                    reg_date=row.reg_date,
+                    completed=completed,
+                    payment_status=payment_status,
+                    exception=row.exception,
+                )
+            )
+
+    return enrollments
 
 
 def _select_course_by_name(courses: list[Course], name: str) -> Course:

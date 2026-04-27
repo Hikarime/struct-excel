@@ -20,6 +20,11 @@ class Sector(Enum):
     STUDENT = "Student"
 
 
+class PaymentStatus(Enum):
+    PAID = "PAID"
+    PENDING = "PENDING"
+
+
 @dataclass
 class Student:
     student_id: int
@@ -67,7 +72,7 @@ class Enrollment:
     session_id: int
     reg_date: datetime
     completed: bool
-    payment_status: str
+    payment_status: PaymentStatus
     exception: str | None
 
 
