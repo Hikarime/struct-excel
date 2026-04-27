@@ -1,7 +1,11 @@
 import pytest
 from datetime import datetime
-from struct_excel.models import SessionMode
-from struct_excel.parser import parse_course_session
+from struct_excel.models import PaymentStatus, SessionMode
+from struct_excel.parser import (
+    parse_bool_schema,
+    parse_course_session,
+    parse_payment_status,
+)
 
 
 class TestParseCourseSession:
@@ -94,3 +98,55 @@ class TestParseCourseSession:
         assert result.course_name == "PECB CISO"
         assert result.duration == 0.0
         assert result.mode == SessionMode.OFFLINE
+
+
+class TestParseBoolSchema:
+    def test_none_returns_false(self):
+        assert parse_bool_schema(None) is False
+
+    def test_yes_returns_true(self):
+        assert parse_bool_schema("yes") is True
+
+    def test_yes_uppercase_returns_true(self):
+        assert parse_bool_schema("YES") is True
+
+    def test_true_returns_true(self):
+        assert parse_bool_schema("true") is True
+
+    def test_true_uppercase_returns_true(self):
+        assert parse_bool_schema("TRUE") is True
+
+    def test_one_returns_true(self):
+        assert parse_bool_schema("1") is True
+
+    def test_one_with_spaces_returns_true(self):
+        assert parse_bool_schema("  1  ") is True
+
+    def test_other_returns_false(self):
+        assert parse_bool_schema("no") is False
+
+    def test_other_returns_false_2(self):
+        assert parse_bool_schema("false") is False
+
+    def test_other_returns_false_3(self):
+        assert parse_bool_schema("0") is False
+
+
+class TestParsePaymentStatus:
+    def test_none_returns_pending(self):
+        assert parse_payment_status(None) == PaymentStatus.PENDING
+
+    def test_paid_uppercase_returns_paid(self):
+        assert parse_payment_status("PAID") == PaymentStatus.PAID
+
+    def test_paid_lowercase_returns_paid(self):
+        assert parse_payment_status("paid") == PaymentStatus.PAID
+
+    def test_paid_with_spaces_returns_paid(self):
+        assert parse_payment_status("  PAID  ") == PaymentStatus.PAID
+
+    def test_pending_returns_pending(self):
+        assert parse_payment_status("PENDING") == PaymentStatus.PENDING
+
+    def test_other_returns_pending(self):
+        assert parse_payment_status("ABC") == PaymentStatus.PENDING
