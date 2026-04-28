@@ -1,3 +1,4 @@
+from datetime import datetime
 from openpyxl.worksheet.worksheet import Worksheet
 
 from models import RawRow
@@ -16,10 +17,17 @@ def read_raw_row(ws: Worksheet) -> list[RawRow]:
         payment_status = _conv_str_none(row[headers["Payment Status"]])
         experience = _conv_str_none(row[headers["IT/Cybersecurity work exp (yrs)"]])
         it_background = _conv_str_none(row[headers["IT/Cybersecurity bckgrd (Yes/No)"]])
+        reg_date = row[headers["Reg Date"]]
+        try:
+            reg_date = _parse_datetime(reg_date)
+        except ValueError as e:
+            raise ValueError(
+                f"Sheet '{ws.title}', row {row.index}, invalid Reg Date: {reg_date}"
+            ) from e
 
         rows.append(
             RawRow(
-                reg_date=row[headers["Reg Date"]],
+                reg_date=reg_date,
                 student_full_name=str(row[headers["Full Name"]]),
                 student_email=str(row[headers["Email"]]),
                 student_company=str(row[headers["Company"]]),
@@ -46,3 +54,13 @@ def _conv_str_none(value) -> str | None:
     if value is None or value == "":
         return None
     return value
+
+
+def _parse_datetime(value) -> datetime:
+    if isinstance(value, datetime):
+        return value
+    elif isinstance(value, str):
+        dt = datetime.strptime(value, "%d/%m/%Y")
+        return dt
+    else:
+        raise ValueError("Unsupported date format")
