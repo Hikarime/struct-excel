@@ -17,6 +17,9 @@ _ALIASES: dict[str, str] = {
     "america": "US",
 }
 
+_INVALID_COUNTRY = "UNKNOWN"
+_INVALID_PHONE = "NAN"
+
 
 def _get_row_data(ws: Worksheet, row: int) -> list:
     return [ws.cell(row=row, column=col).value for col in range(1, ws.max_column + 1)]
@@ -78,43 +81,46 @@ def _normalize_country_and_phone_col(ws: Worksheet, err_ws: Worksheet) -> None:
         if not isinstance(country_cell, Cell) or not isinstance(phone_cell, Cell):
             continue
 
-        if not isinstance(country_cell.value, str):
-            _add_error_row(ws, err_ws, row, rows_to_delete, "country is not a string")
-            continue
-        try:
-            normalized_country = _normalize_country(country_cell.value)
-            country_cell.value = normalized_country
-        except ValueError as e:
-            _add_error_row(ws, err_ws, row, rows_to_delete, str(e))
-            logger.error(f"row: {row} exception: {e}")
-            continue
+        normalized_country = _normalize_country(country_cell.value)
+        if normalized_country == _INVALID_COUNTRY:
+            logger.error(
+                f"row: {row} exception: normalize country={country_cell.value} failed"
+            )
+            _add_error_row(
+                ws,
+                err_ws,
+                row,
+                rows_to_delete,
+                f"normalize country={country_cell.value} failed",
+            )
+        country_cell.value = normalized_country
 
         phone_str = _phone_to_str(phone_cell.value)
-        if not phone_str:
-            _add_error_row(ws, err_ws, row, rows_to_delete, "phone is empty")
-            continue
+        phone_cell.value = _normalize_phone(phone_str, normalized_country)
+        if phone_cell.value == _INVALID_PHONE:
+            _add_error_row(
+                ws,
+                err_ws,
+                row,
+                rows_to_delete,
+                f"parse number={phone_str} country={country_cell.value} failed",
+            )
+            logger.error(
+                f"row: {row} parse number={phone_str} country={country_cell.value} failed"
+            )
 
-        try:
-            phone_cell.value = _normalize_phone(phone_str, normalized_country)
-        except ValueError as e:
-            _add_error_row(ws, err_ws, row, rows_to_delete, str(e))
-            logger.error(f"row: {row} exception: {e}")
 
-    for row in reversed(rows_to_delete):
-        ws.delete_rows(row)
-
-
-def _phone_to_str(value) -> str | None:
+def _phone_to_str(value) -> str:
     if value is None:
-        return None
+        return _INVALID_PHONE
     if isinstance(value, float):
         return str(int(value))
     return str(value)
 
 
-def _normalize_country(country: str) -> str:
-    if not country or not country.strip():
-        raise ValueError(f"invalid country: {country}")
+def _normalize_country(country) -> str:
+    if not country or not isinstance(country, str) or not country.strip():
+        return _INVALID_COUNTRY
 
     country = country.strip()
     country = re.sub(r"\s+", " ", country)
@@ -124,24 +130,20 @@ def _normalize_country(country: str) -> str:
     try:
         res = pycountry.countries.lookup(country)
         return res.alpha_2
-    except LookupError as e:
-        raise ValueError(f"normalize country={country} failed") from e
+    except LookupError:
+        return _INVALID_COUNTRY
 
 
 def _normalize_phone(number: str, country: str) -> str:
     if not number or not country:
-        raise ValueError(
-            f"number and country cannot be empty, number={number}, country={country}"
-        )
+        return _INVALID_PHONE
 
     try:
         parsed = phonenumbers.parse(number, country)
         if not phonenumbers.is_possible_number(parsed):
-            raise ValueError(
-                f"number={number} country={country} is not a possible number"
-            )
+            return _INVALID_PHONE
 
         res = phonenumbers.format_number(parsed, phonenumbers.PhoneNumberFormat.E164)
         return res
-    except phonenumbers.NumberParseException as e:
-        raise ValueError(f"parse number={number} country={country} failed") from e
+    except phonenumbers.NumberParseException:
+        return _INVALID_PHONE

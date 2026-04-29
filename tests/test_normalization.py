@@ -32,12 +32,10 @@ class TestNormalizeCountry:
         assert result == "US"
 
     def test_normalize_country_invalid(self):
-        with pytest.raises(ValueError):
-            _normalize_country("INVALID_COUNTRY")
+        assert _normalize_country("INVALID_COUNTRY") == "UNKNOWN"
 
     def test_normalize_country_empty(self):
-        with pytest.raises(ValueError):
-            _normalize_country("")
+        assert _normalize_country("") == "UNKNOWN"
 
 
 class TestNormalizePhone:
@@ -50,22 +48,19 @@ class TestNormalizePhone:
         assert result == "+12345678900"
 
     def test_normalize_phone_invalid(self):
-        with pytest.raises(ValueError):
-            _normalize_phone("invalid", "US")
+        assert _normalize_phone("invalid", "US") == "NAN"
 
     def test_normalize_phone_empty_number(self):
-        with pytest.raises(ValueError):
-            _normalize_phone("", "US")
+        assert _normalize_phone("", "US") == "NAN"
 
     def test_normalize_phone_empty_country(self):
-        with pytest.raises(ValueError):
-            _normalize_phone("1234567890", "")
+        assert _normalize_phone("1234567890", "") == "NAN"
 
 
 class TestPhoneToStr:
     def test_phone_to_str_none(self):
         result = _phone_to_str(None)
-        assert result is None
+        assert result is "NAN"
 
     def test_phone_to_str_float(self):
         result = _phone_to_str(1234567890.0)
@@ -140,4 +135,3 @@ class TestTrimCells:
         cell_value = result_ws.cell(row=1, column=1).value
 
         assert cell_value == 123
-

@@ -1,7 +1,10 @@
 from datetime import datetime
+import logging
 from openpyxl.worksheet.worksheet import Worksheet
 
 from struct_excel.models import RawRow
+
+logger = logging.getLogger(__name__)
 
 
 def read_raw_row(ws: Worksheet) -> list[RawRow]:
@@ -21,9 +24,10 @@ def read_raw_row(ws: Worksheet) -> list[RawRow]:
         try:
             reg_date = _parse_datetime(reg_date)
         except ValueError as e:
-            raise ValueError(
-                f"Sheet '{ws.title}', row {row.index}, invalid Reg Date: {reg_date}"
-            ) from e
+            logger.warning(
+                f"Sheet '{ws.title}', row {row.index}, invalid Reg Date: {reg_date}, err: {e}"
+            )
+            continue
 
         rows.append(
             RawRow(
