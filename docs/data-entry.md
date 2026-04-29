@@ -48,7 +48,7 @@ You do not need to add new rows here, but you must find the correct `session_id`
 
 1. Look at the course requested by the user in the registration form.
 2. Open `courses` sheet to confirm the `course_id`.
-3. Open `sessions` sheet and locate the exact row that matches both the `course_id` and the requested date/time (`start_datetime`) to confirm the `session_id`.
+3. Open `sessions` sheet and locate the exact row that matches both the `course_id` and the `start_datetime` to confirm the `session_id`.
 
 *Note down the `session_id` from that row for Step 4.*
 
@@ -56,10 +56,20 @@ You do not need to add new rows here, but you must find the correct `session_id`
 
 You must link the student to a specific session. If the information is missing, you must manually update the reference tables.
 
-1.  Check `courses` sheet: Search for the course name. If not found, assign a new Primary Key  (last ID + 1) and enter the `course_name`.
-2.  Check `sessions` sheet: Find the row matching the `course_id` and the requested date/time.
-    1.  If no matching session exists, create a new one.
-    2.  Ensure the Foreign Key (`course_id`) correctly points to the corresponding course.
+1.  `courses` sheet
+    1.  Search for the course name. 
+    2.  If not found, assign the next sequential integer to the newly added course. Then, enter the `course_name`. Extract the course name using only the main title and any content in parentheses (), while strictly excluding all content in square brackets []. 
+        - For example, the input string "Jan 5 2026 @ 1.30pm MYT | [Online] Cybersecurity Awareness [3hr]" should result in the extracted course name "Cybersecurity Awareness".
+        - The input string "Jan 23 2026 @ 9.30am MYT | Introduction to Identity & Access Management (IAM) [2hr]" should result in the extracted course name "Introduction to Identity & Access Management (IAM)".
+    3.  Note down the `courses_id`.
+2.  `sessions` sheet: 
+    1.  Assign the next sequential integer to the newly added session.
+        -  If an entry contains multiple date ranges, split it into two or more separate sessions.
+        - For example, the string "June 9-11 2026 (& June 15-16 2026) | ISC2 Certified Information Systems Security Professional (CISSP)" should be recorded as two distinct sessions. These two sessions share the same `course_id`.
+    2.  Enter the `course_id` corresponding to the session.
+    3.  `start_datetime` and `end_datetime` with the start and end dates respectively; leave blank if not applicable.
+        `mode`: Enter exactly as `online` or `offline`. Since online is typically explicitly labeled, the default is offline if no label is present.
+        `duration`: Enter only the numeric value specified in square brackets `[]`. If none is provided, enter `0`.
 
 
 ---
