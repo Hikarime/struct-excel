@@ -5,11 +5,11 @@ from struct_excel.models import (
     Supervisor,
     Course,
     Student,
-    CourseSession,
+    Session,
     Enrollment,
     Gender,
     Sector,
-    CourseSessionMode,
+    SessionMode,
 )
 
 RAW: list[RawRow] = [
@@ -306,29 +306,29 @@ EXPECTED_STUDENTS: list[Student] = [
     ),
 ]
 
-EXPECTED_SESSIONS: list[CourseSession] = [
-    CourseSession(
+EXPECTED_SESSIONS: list[Session] = [
+    Session(
         session_id=1,
         course_id=1,
         start_datetime=datetime(2026, 2, 19),
         end_datetime=datetime(2026, 2, 20),
-        mode=CourseSessionMode.ONLINE,
+        mode=SessionMode.ONLINE,
         duration=3.0,
     ),
-    CourseSession(
+    Session(
         session_id=2,
         course_id=2,
         start_datetime=datetime(2026, 2, 23),
         end_datetime=datetime(2026, 2, 27),
-        mode=CourseSessionMode.OFFLINE,
+        mode=SessionMode.OFFLINE,
         duration=0.0,
     ),
-    CourseSession(
+    Session(
         session_id=3,
         course_id=3,
         start_datetime=datetime(2026, 2, 24, 9, 30),
         end_datetime=datetime(2026, 2, 24, 9, 30),
-        mode=CourseSessionMode.OFFLINE,
+        mode=SessionMode.OFFLINE,
         duration=2.0,
     ),
 ]

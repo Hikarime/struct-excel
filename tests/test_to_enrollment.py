@@ -38,8 +38,8 @@ def test_to_enrollment_deduplication():
         Gender,
         RawRow,
         Sector,
-        CourseSession,
-        CourseSessionMode,
+        Session,
+        SessionMode,
         Student,
     )
 
@@ -104,12 +104,12 @@ def test_to_enrollment_deduplication():
         Course(course_id=1, course_name="Python Basics"),
     ]
     sessions = [
-        CourseSession(
+        Session(
             session_id=1,
             course_id=1,
             start_datetime=datetime(2026, 2, 10),
             end_datetime=datetime(2026, 2, 10),
-            mode=CourseSessionMode.ONLINE,
+            mode=SessionMode.ONLINE,
             duration=2.0,
         ),
     ]
@@ -125,8 +125,8 @@ def test_to_enrollment_no_student_match():
         Gender,
         RawRow,
         Sector,
-        CourseSession,
-        CourseSessionMode,
+        Session,
+        SessionMode,
         Student,
     )
 
@@ -172,12 +172,12 @@ def test_to_enrollment_no_student_match():
         Course(course_id=1, course_name="Python Basics"),
     ]
     sessions = [
-        CourseSession(
+        Session(
             session_id=1,
             course_id=1,
             start_datetime=datetime(2026, 2, 10),
             end_datetime=datetime(2026, 2, 10),
-            mode=CourseSessionMode.ONLINE,
+            mode=SessionMode.ONLINE,
             duration=2.0,
         ),
     ]
