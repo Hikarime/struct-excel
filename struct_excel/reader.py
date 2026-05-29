@@ -2,7 +2,7 @@ from datetime import datetime
 import logging
 from openpyxl.worksheet.worksheet import Worksheet
 
-from struct_excel.models import RawRow
+from struct_excel.models import RawRow, RawTrainingList, TrainingListParseResult
 
 logger = logging.getLogger(__name__)
 
@@ -48,6 +48,25 @@ def read_raw_row(ws: Worksheet) -> list[RawRow]:
                 experience=experience,
                 completed=completed,
                 payment_status=payment_status,
+            )
+        )
+
+    return rows
+
+
+def read_training_list(ws: Worksheet) -> list[RawTrainingList]:
+    headers = {cell.value: idx for idx, cell in enumerate(ws[1])}
+    rows = []
+
+    for row in ws.iter_rows(min_row=2, values_only=True):
+        training = row[headers["Training"]]
+        level = row[headers["Level"]]
+        training_hour = row[headers["No of Hours (Training)"]]
+        rows.append(
+            RawTrainingList(
+                training=str(training),
+                level=str(level),
+                training_hour=str(training_hour),
             )
         )
 
