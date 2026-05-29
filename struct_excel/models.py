@@ -53,6 +53,7 @@ class Student(SQLModel, table=True):
 class Course(SQLModel, table=True):
     course_id: int | None = Field(default=None, primary_key=True)
     course_name: str
+    level: CourseLevel
 
 
 class Session(SQLModel, table=True):
@@ -107,3 +108,19 @@ class CourseParseResult:
     mode: SessionMode
     course_name: str
     duration: float
+
+
+@dataclass
+class RawTrainingList:
+    training: str
+    level: str
+    training_hour: str
+
+
+@dataclass
+class TrainingListParseResult:
+    training: str
+    level: CourseLevel
+    train_day: int
+    hour: int
+    exam_day: int
