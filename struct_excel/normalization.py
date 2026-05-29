@@ -38,16 +38,17 @@ def _add_error_row(
     rows_to_delete.append(row)
 
 
-def normalize_sheet(ws: Worksheet, err_ws: Worksheet) -> None:
+def normalize_sheet(ws: Worksheet, err_ws: Worksheet | None) -> None:
     headers = [cell.value for cell in ws[1]]
     headers.append("Error Reason")
     ws = _trim_cells(ws)
-    err_ws.append(headers)
 
-    try:
-        _normalize_country_and_phone_col(ws, err_ws)
-    except Exception:
-        pass
+    if err_ws:
+        err_ws.append(headers)
+        try:
+            _normalize_country_and_phone_col(ws, err_ws)
+        except Exception:
+            pass
 
 
 def _trim_cells(ws: Worksheet) -> Worksheet:
