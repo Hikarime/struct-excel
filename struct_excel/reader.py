@@ -25,7 +25,7 @@ def read_raw_row(ws: Worksheet) -> list[RawRow]:
             reg_date = _parse_datetime(reg_date)
         except ValueError as e:
             logger.warning(
-                f"Sheet '{ws.title}', row {row.index}, invalid Reg Date: {reg_date}, err: {e}"
+                f"Sheet '{ws.title}', row {row.index}, reg_data {reg_date} invalid Reg Date: {reg_date}, err: {e}"
             )
             continue
 
@@ -66,7 +66,7 @@ def read_training_list(ws: Worksheet) -> list[RawTrainingList]:
             RawTrainingList(
                 training=str(training),
                 level=str(level),
-                training_hour=str(training_hour),
+                train_duration=str(training_hour),
             )
         )
 
