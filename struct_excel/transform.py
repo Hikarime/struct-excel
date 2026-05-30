@@ -1,12 +1,14 @@
 import logging
 from struct_excel.models import (
     Course,
+    CourseLevel,
     Enrollment,
     RawRow,
     Session,
     RawTrainingList,
     Student,
     Supervisor,
+    TrainingListParseResult,
 )
 from struct_excel.parser import (
     parse_bool_schema,
@@ -16,6 +18,7 @@ from struct_excel.parser import (
     parse_gender,
     parse_experience,
     parse_sector,
+    parse_training_list,
 )
 
 logger = logging.getLogger(__name__)
@@ -39,9 +42,21 @@ def to_supervisor(raw: list[RawRow]) -> list[Supervisor]:
     return sups
 
 
-def to_course(raw: list[RawRow], raw_courses: list[RawTrainingList]) -> list[Course]:
+def to_training_list(raw: list[RawTrainingList]) -> list[TrainingListParseResult]:
+    res = []
+    for entry in raw:
+        res.append(parse_training_list(entry))
+
+    return res
+
+
+# TODO: Handle missing courses
+def to_course(
+    raw: list[RawRow], training_list: list[TrainingListParseResult]
+) -> list[Course]:
     courses: list[Course] = []
     duplicate = set()
+    train_dict = {t.training: t for t in training_list}
 
     for row in raw:
         parsed = parse_course_session(row.course)
@@ -50,10 +65,19 @@ def to_course(raw: list[RawRow], raw_courses: list[RawTrainingList]) -> list[Cou
             continue
         duplicate.add(course_name)
 
+        train = train_dict.get(course_name)
+        level = CourseLevel.ENTRY
+        if not train:
+            logger.error(f"missing course name: {course_name}")
+            # continue
+        else:
+            level = train.level
+
         courses.append(
             Course(
                 course_id=len(courses) + 1,
                 course_name=course_name,
+                level=level,
             )
         )
 
