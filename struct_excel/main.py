@@ -14,7 +14,14 @@ def parse_args():
         help="Path to source Excel file",
     )
     parser.add_argument(
-        "--name", required=True, help="Name of the sheet to be normalized"
+        "--name",
+        required=True,
+        help="Name of the sheet to be normalized",
+    )
+    parser.add_argument(
+        "--course",
+        required=True,
+        help="Path to training list Excel file",
     )
 
     return parser.parse_args()
@@ -32,12 +39,15 @@ def main():
     args = parse_args()
     excel_path = args.src
     sheet_name = args.name
+    course_list_path = args.course
 
     dist_dir = Path("dist")
     dist_dir.mkdir(parents=True, exist_ok=True)
 
     ws = get_excel_sheet(excel_path, sheet_name)
-    sheet_to_db(ws, DB_PATH, ERR_XLSX)
+    course_list_ws = get_excel_sheet(course_list_path, "Sheet1")
+
+    sheet_to_db(ws, DB_PATH, ERR_XLSX, course_list_ws)
 
 
 if __name__ == "__main__":
