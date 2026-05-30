@@ -74,7 +74,7 @@ class Supervisor(SQLModel, table=True):
 class Enrollment(SQLModel, table=True):
     enrollment_id: int | None = Field(default=None, primary_key=True)
     student_id: int = Field(foreign_key="student.student_id")
-    session_id: int = Field(foreign_key="coursesession.session_id")
+    session_id: int = Field(foreign_key="session.session_id")
     reg_date: datetime
     completed: bool = Field(default=False)
     payment_status: PaymentStatus = Field(default=PaymentStatus.PENDING)
@@ -114,7 +114,7 @@ class CourseParseResult:
 class RawTrainingList:
     training: str
     level: str
-    training_hour: str
+    train_duration: str
 
 
 @dataclass
