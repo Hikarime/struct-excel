@@ -1,5 +1,6 @@
 from datetime import datetime
 from struct_excel.models import (
+    CourseLevel,
     PaymentStatus,
     RawRow,
     Supervisor,
@@ -10,6 +11,7 @@ from struct_excel.models import (
     Gender,
     Sector,
     SessionMode,
+    TrainingListParseResult,
 )
 
 RAW: list[RawRow] = [
@@ -167,6 +169,37 @@ RAW: list[RawRow] = [
     ),
 ]
 
+TRAINING_LIST: list[TrainingListParseResult] = [
+    TrainingListParseResult(
+        training="Cybersecurity Tools",
+        level=CourseLevel.INTERMEDIATE,
+        train_day=0,
+        hour=6,
+        exam_day=0,
+    ),
+    TrainingListParseResult(
+        training="RCC SOC Analyst & Security Manager",
+        level=CourseLevel.ADVANCED,
+        train_day=5,
+        hour=35,
+        exam_day=0,
+    ),
+    TrainingListParseResult(
+        training="Introduction to Identity & Access Management (IAM)",
+        level=CourseLevel.ENTRY,
+        train_day=0,
+        exam_day=0,
+        hour=2,
+    ),
+    TrainingListParseResult(
+        training="PECB ISO27001 (ISMS) Lead Auditor",
+        level=CourseLevel.ADVANCED,
+        train_day=4,
+        hour=35,
+        exam_day=1,
+    ),
+]
+
 EXPECTED_SUPERVISORS: list[Supervisor] = [
     Supervisor(supervisor_id=1, full_name="HYL", email="hyl.@email.gov.my"),
     Supervisor(supervisor_id=2, full_name="HBB", email="hbb.@email.gov.my"),
@@ -176,10 +209,20 @@ EXPECTED_SUPERVISORS: list[Supervisor] = [
 ]
 
 EXPECTED_COURSES: list[Course] = [
-    Course(course_id=1, course_name="Cybersecurity Tools"),
-    Course(course_id=2, course_name="RCC SOC Analyst & Security Manager"),
     Course(
-        course_id=3, course_name="Introduction to Identity & Access Management (IAM)"
+        course_id=1,
+        course_name="Cybersecurity Tools",
+        level=CourseLevel.INTERMEDIATE,
+    ),
+    Course(
+        course_id=2,
+        course_name="RCC SOC Analyst & Security Manager",
+        level=CourseLevel.ADVANCED,
+    ),
+    Course(
+        course_id=3,
+        course_name="Introduction to Identity & Access Management (IAM)",
+        level=CourseLevel.ENTRY,
     ),
 ]
 
