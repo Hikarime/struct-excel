@@ -5,7 +5,9 @@ from struct_excel.parser import (
     parse_bool_schema,
     parse_course_session,
     parse_payment_status,
+    parse_training_list,
 )
+from tests.test_data import RAW_TRAINING_LIST, TRAINING_LIST
 
 
 class TestParseCourseSession:
@@ -150,3 +152,9 @@ class TestParsePaymentStatus:
 
     def test_other_returns_pending(self):
         assert parse_payment_status("ABC") == PaymentStatus.PENDING
+
+
+class TestParseTrainingList:
+    def test_training_list(self):
+        for i in range(len(RAW_TRAINING_LIST)):
+            assert parse_training_list(RAW_TRAINING_LIST[i]) == TRAINING_LIST[i]

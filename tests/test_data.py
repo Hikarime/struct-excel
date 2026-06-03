@@ -3,6 +3,7 @@ from struct_excel.models import (
     CourseLevel,
     PaymentStatus,
     RawRow,
+    RawTrainingList,
     Supervisor,
     Course,
     Student,
@@ -166,6 +167,29 @@ RAW: list[RawRow] = [
         experience="Nil",
         completed="No",
         payment_status="Pending",
+    ),
+]
+
+RAW_TRAINING_LIST: list[RawTrainingList] = [
+    RawTrainingList(
+        training="Cybersecurity Tools",
+        level="Intermediate",
+        train_duration="6 Hours",
+    ),
+    RawTrainingList(
+        training="RCC SOC Analyst & Security Manager",
+        level="ADVANCED",
+        train_duration="5 Days​ (35 hours)",
+    ),
+    RawTrainingList(
+        training="Introduction to Identity & Access Management (IAM)",
+        level="eNtry",
+        train_duration="2 Hours",
+    ),
+    RawTrainingList(
+        training="PECB ISO27001 (ISMS) Lead Auditor",
+        level="advanced",
+        train_duration="4 Days Training + 1 Day  Exam (35 hours)",
     ),
 ]
 
