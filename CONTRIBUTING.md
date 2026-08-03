@@ -33,7 +33,7 @@
 5. Set and update the upstream
 
    ```bash
-   git remote add upstream https://github.com/Fovir-GitHub/struct-excel.git
+   git remote add upstream https://github.com/FovirDev/struct-excel.git
    git fetch upstream
    ```
 

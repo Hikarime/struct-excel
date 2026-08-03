@@ -6,7 +6,7 @@ This repository stores script for structuring Excel data file provided by MCMC a
 
 ### From Release
 
-Access [GitHub Release](https://github.com/Fovir-GitHub/struct-excel/releases/latest) and download the binary matches your OS.
+Access [GitHub Release](https://github.com/FovirDev/struct-excel/releases/latest) and download the binary matches your OS.
 
 | OS      | Binary                      |
 | ------- | --------------------------- |
@@ -27,7 +27,7 @@ This will create a `dist/` directory and output results in it. There will be a `
 1. Clone the repository
 
    ```bash
-   git clone https://github.com/Fovir-GitHub/struct-excel.git
+   git clone https://github.com/FovirDev/struct-excel.git
    cd struct-excel
    ```
 
@@ -49,10 +49,10 @@ This will create a `dist/` directory and output results in it. There will be a `
    pip install -r requirements.txt
    ```
 
-4. Execute the script
+4. Execute the program
 
    ```bash
-   python struct_excel/main.py --src /path/to/source/excel
+   streamlit run struct_excel/app.py
    ```
 
 ## Documentation
