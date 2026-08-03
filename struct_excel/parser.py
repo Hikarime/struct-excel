@@ -2,11 +2,14 @@ from datetime import datetime
 import calendar
 import re
 from struct_excel.models import (
+    CourseLevel,
     CourseParseResult,
-    CourseSessionMode,
+    RawTrainingList,
+    SessionMode,
     Gender,
     Sector,
     PaymentStatus,
+    TrainingListParseResult,
 )
 
 
@@ -85,6 +88,62 @@ def parse_course_session(raw_course: str) -> CourseParseResult:
     )
 
 
+def parse_training_list(raw: RawTrainingList) -> TrainingListParseResult:
+    level = _parse_course_level(raw.level)
+    train_day, hour, exam_day = _parse_training_duration(raw.train_duration)
+    return TrainingListParseResult(
+        training=raw.training,
+        level=level,
+        train_day=train_day,
+        hour=hour,
+        exam_day=exam_day,
+    )
+
+
+def _parse_course_level(value: str) -> CourseLevel:
+    normalized = value.strip().lower()
+    for level in CourseLevel:
+        if normalized in {level.name.lower(), level.value.lower()}:
+            return level
+    return CourseLevel.ENTRY
+
+
+def _parse_training_duration(value: str) -> tuple[int, int, int]:
+    """
+    Returns:
+    --------
+    train_day, hour, exam_day
+    """
+
+    # `value` to lower.
+    value = value.lower().strip()
+
+    exam_day = 0
+    train_day = 0
+    hour = 0
+
+    # Match exam day like `* day exam`. Default is 0
+    exam_match = re.search(r"(\d+)\s+days?\s+exam", value)
+    if exam_match:
+        exam_day = int(exam_match.group(1))
+
+    # Match train day like `* days` or `* days training`. Default is 0
+    train_match = re.search(r"(\d+)\s+days?\s+training", value)
+    if train_match:
+        train_day = int(train_match.group(1))
+    else:
+        day_match = re.search(r"(\d+)\s+days?(?!\s+exam)", value)
+        if day_match:
+            train_day = int(day_match.group(1))
+
+    # Match hours like `* hours`. Default is 0
+    hour_match = re.search(r"(\d+)\s+hours?", value)
+    if hour_match:
+        hour = int(hour_match.group(1))
+
+    return (train_day, hour, exam_day)
+
+
 def _parse_course_name_duration(right_part: str) -> tuple[str, float]:
     course_name = ""
     duration = 0
@@ -103,10 +162,10 @@ def _parse_course_name_duration(right_part: str) -> tuple[str, float]:
     return course_name, duration
 
 
-def _parse_mode(raw: str) -> CourseSessionMode:
+def _parse_mode(raw: str) -> SessionMode:
     if "[online]" in raw.lower():
-        return CourseSessionMode.ONLINE
-    return CourseSessionMode.OFFLINE
+        return SessionMode.ONLINE
+    return SessionMode.OFFLINE
 
 
 def _parse_datetime(left_part: str) -> list[tuple[datetime, datetime]]:

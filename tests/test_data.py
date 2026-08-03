@@ -1,15 +1,18 @@
 from datetime import datetime
 from struct_excel.models import (
+    CourseLevel,
     PaymentStatus,
     RawRow,
+    RawTrainingList,
     Supervisor,
     Course,
     Student,
-    CourseSession,
+    Session,
     Enrollment,
     Gender,
     Sector,
-    CourseSessionMode,
+    SessionMode,
+    TrainingListParseResult,
 )
 
 RAW: list[RawRow] = [
@@ -167,6 +170,60 @@ RAW: list[RawRow] = [
     ),
 ]
 
+RAW_TRAINING_LIST: list[RawTrainingList] = [
+    RawTrainingList(
+        training="Cybersecurity Tools",
+        level="Intermediate",
+        train_duration="6 Hours",
+    ),
+    RawTrainingList(
+        training="RCC SOC Analyst & Security Manager",
+        level="ADVANCED",
+        train_duration="5 Days​ (35 hours)",
+    ),
+    RawTrainingList(
+        training="Introduction to Identity & Access Management (IAM)",
+        level="eNtry",
+        train_duration="2 Hours",
+    ),
+    RawTrainingList(
+        training="PECB ISO27001 (ISMS) Lead Auditor",
+        level="advanced",
+        train_duration="4 Days Training + 1 Day  Exam (35 hours)",
+    ),
+]
+
+TRAINING_LIST: list[TrainingListParseResult] = [
+    TrainingListParseResult(
+        training="Cybersecurity Tools",
+        level=CourseLevel.INTERMEDIATE,
+        train_day=0,
+        hour=6,
+        exam_day=0,
+    ),
+    TrainingListParseResult(
+        training="RCC SOC Analyst & Security Manager",
+        level=CourseLevel.ADVANCED,
+        train_day=5,
+        hour=35,
+        exam_day=0,
+    ),
+    TrainingListParseResult(
+        training="Introduction to Identity & Access Management (IAM)",
+        level=CourseLevel.ENTRY,
+        train_day=0,
+        exam_day=0,
+        hour=2,
+    ),
+    TrainingListParseResult(
+        training="PECB ISO27001 (ISMS) Lead Auditor",
+        level=CourseLevel.ADVANCED,
+        train_day=4,
+        hour=35,
+        exam_day=1,
+    ),
+]
+
 EXPECTED_SUPERVISORS: list[Supervisor] = [
     Supervisor(supervisor_id=1, full_name="HYL", email="hyl.@email.gov.my"),
     Supervisor(supervisor_id=2, full_name="HBB", email="hbb.@email.gov.my"),
@@ -176,10 +233,20 @@ EXPECTED_SUPERVISORS: list[Supervisor] = [
 ]
 
 EXPECTED_COURSES: list[Course] = [
-    Course(course_id=1, course_name="Cybersecurity Tools"),
-    Course(course_id=2, course_name="RCC SOC Analyst & Security Manager"),
     Course(
-        course_id=3, course_name="Introduction to Identity & Access Management (IAM)"
+        course_id=1,
+        course_name="Cybersecurity Tools",
+        level=CourseLevel.INTERMEDIATE,
+    ),
+    Course(
+        course_id=2,
+        course_name="RCC SOC Analyst & Security Manager",
+        level=CourseLevel.ADVANCED,
+    ),
+    Course(
+        course_id=3,
+        course_name="Introduction to Identity & Access Management (IAM)",
+        level=CourseLevel.ENTRY,
     ),
 ]
 
@@ -306,29 +373,29 @@ EXPECTED_STUDENTS: list[Student] = [
     ),
 ]
 
-EXPECTED_SESSIONS: list[CourseSession] = [
-    CourseSession(
+EXPECTED_SESSIONS: list[Session] = [
+    Session(
         session_id=1,
         course_id=1,
         start_datetime=datetime(2026, 2, 19),
         end_datetime=datetime(2026, 2, 20),
-        mode=CourseSessionMode.ONLINE,
+        mode=SessionMode.ONLINE,
         duration=3.0,
     ),
-    CourseSession(
+    Session(
         session_id=2,
         course_id=2,
         start_datetime=datetime(2026, 2, 23),
         end_datetime=datetime(2026, 2, 27),
-        mode=CourseSessionMode.OFFLINE,
+        mode=SessionMode.OFFLINE,
         duration=0.0,
     ),
-    CourseSession(
+    Session(
         session_id=3,
         course_id=3,
         start_datetime=datetime(2026, 2, 24, 9, 30),
         end_datetime=datetime(2026, 2, 24, 9, 30),
-        mode=CourseSessionMode.OFFLINE,
+        mode=SessionMode.OFFLINE,
         duration=2.0,
     ),
 ]

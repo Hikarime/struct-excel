@@ -10,7 +10,7 @@ class Gender(str, Enum):
     OTHER = "other"
 
 
-class CourseSessionMode(str, Enum):
+class SessionMode(str, Enum):
     ONLINE = "online"
     OFFLINE = "offline"
 
@@ -24,6 +24,12 @@ class Sector(str, Enum):
 class PaymentStatus(str, Enum):
     PAID = "PAID"
     PENDING = "PENDING"
+
+
+class CourseLevel(str, Enum):
+    ENTRY = "Entry"
+    INTERMEDIATE = "Intermediate"
+    ADVANCED = "Advanced"
 
 
 class Student(SQLModel, table=True):
@@ -47,14 +53,15 @@ class Student(SQLModel, table=True):
 class Course(SQLModel, table=True):
     course_id: int | None = Field(default=None, primary_key=True)
     course_name: str
+    level: CourseLevel
 
 
-class CourseSession(SQLModel, table=True):
+class Session(SQLModel, table=True):
     session_id: int | None = Field(default=None, primary_key=True)
     course_id: int = Field(foreign_key="course.course_id")
     start_datetime: datetime
     end_datetime: datetime
-    mode: CourseSessionMode = Field(default=CourseSessionMode.OFFLINE)
+    mode: SessionMode = Field(default=SessionMode.OFFLINE)
     duration: float = Field(default=0)
 
 
@@ -67,7 +74,7 @@ class Supervisor(SQLModel, table=True):
 class Enrollment(SQLModel, table=True):
     enrollment_id: int | None = Field(default=None, primary_key=True)
     student_id: int = Field(foreign_key="student.student_id")
-    session_id: int = Field(foreign_key="coursesession.session_id")
+    session_id: int = Field(foreign_key="session.session_id")
     reg_date: datetime
     completed: bool = Field(default=False)
     payment_status: PaymentStatus = Field(default=PaymentStatus.PENDING)
@@ -98,6 +105,22 @@ class RawRow:
 @dataclass
 class CourseParseResult:
     datetime_range: list[tuple[datetime, datetime]]
-    mode: CourseSessionMode
+    mode: SessionMode
     course_name: str
     duration: float
+
+
+@dataclass
+class RawTrainingList:
+    training: str
+    level: str
+    train_duration: str
+
+
+@dataclass
+class TrainingListParseResult:
+    training: str
+    level: CourseLevel
+    train_day: int
+    hour: int
+    exam_day: int

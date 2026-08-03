@@ -2,9 +2,9 @@ from struct_excel.transform import to_course
 
 
 def test_to_course():
-    from tests.test_data import RAW, EXPECTED_COURSES
+    from tests.test_data import RAW, EXPECTED_COURSES, TRAINING_LIST
 
-    courses = to_course(RAW)
+    courses = to_course(RAW, TRAINING_LIST)
 
     assert len(courses) == len(EXPECTED_COURSES)
 
@@ -14,13 +14,14 @@ def test_to_course():
 
 
 def test_to_course_empty():
-    courses = to_course([])
+    courses = to_course([], [])
     assert courses == []
 
 
 def test_to_course_deduplication():
     from datetime import datetime
     from struct_excel.models import RawRow
+    from tests.test_data import TRAINING_LIST
 
     raw_dup = [
         RawRow(
@@ -62,7 +63,7 @@ def test_to_course_deduplication():
             payment_status="Pending",
         ),
     ]
-    courses = to_course(raw_dup)
+    courses = to_course(raw_dup, TRAINING_LIST)
     assert len(courses) == 1
     assert courses[0].course_name == "Python Basics"
     assert courses[0].course_id == 1

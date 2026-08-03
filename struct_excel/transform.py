@@ -1,11 +1,14 @@
 import logging
 from struct_excel.models import (
     Course,
+    CourseLevel,
     Enrollment,
     RawRow,
-    CourseSession,
+    Session,
+    RawTrainingList,
     Student,
     Supervisor,
+    TrainingListParseResult,
 )
 from struct_excel.parser import (
     parse_bool_schema,
@@ -15,6 +18,7 @@ from struct_excel.parser import (
     parse_gender,
     parse_experience,
     parse_sector,
+    parse_training_list,
 )
 
 logger = logging.getLogger(__name__)
@@ -38,9 +42,21 @@ def to_supervisor(raw: list[RawRow]) -> list[Supervisor]:
     return sups
 
 
-def to_course(raw: list[RawRow]) -> list[Course]:
+def to_training_list(raw: list[RawTrainingList]) -> list[TrainingListParseResult]:
+    res = []
+    for entry in raw:
+        res.append(parse_training_list(entry))
+
+    return res
+
+
+# TODO: Handle missing courses
+def to_course(
+    raw: list[RawRow], training_list: list[TrainingListParseResult]
+) -> list[Course]:
     courses: list[Course] = []
     duplicate = set()
+    train_dict = {t.training: t for t in training_list}
 
     for row in raw:
         parsed = parse_course_session(row.course)
@@ -49,10 +65,19 @@ def to_course(raw: list[RawRow]) -> list[Course]:
             continue
         duplicate.add(course_name)
 
+        train = train_dict.get(course_name)
+        level = CourseLevel.ENTRY
+        if not train:
+            logger.error(f"missing course name: {course_name}")
+            # continue
+        else:
+            level = train.level
+
         courses.append(
             Course(
                 course_id=len(courses) + 1,
                 course_name=course_name,
+                level=level,
             )
         )
 
@@ -108,8 +133,8 @@ def to_student(raw: list[RawRow], supervisors: list[Supervisor]) -> list[Student
     return students
 
 
-def to_session(raw: list[RawRow], courses: list[Course]) -> list[CourseSession]:
-    sessions: list[CourseSession] = []
+def to_session(raw: list[RawRow], courses: list[Course]) -> list[Session]:
+    sessions: list[Session] = []
     session_id = 1
     seen = set()
 
@@ -133,7 +158,7 @@ def to_session(raw: list[RawRow], courses: list[Course]) -> list[CourseSession]:
             seen.add(dedup_key)
 
             sessions.append(
-                CourseSession(
+                Session(
                     session_id=session_id,
                     course_id=existed_course.course_id,
                     start_datetime=start,
@@ -151,7 +176,7 @@ def to_enrollment(
     raw: list[RawRow],
     students: list[Student],
     courses: list[Course],
-    sessions: list[CourseSession],
+    sessions: list[Session],
 ) -> list[Enrollment]:
     student_id_by_email = {student.email: student.student_id for student in students}
     course_id_by_name = {course.course_name: course.course_id for course in courses}
