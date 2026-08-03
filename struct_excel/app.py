@@ -1,4 +1,5 @@
 import streamlit as st
+import sys
 from io import BytesIO
 from datetime import datetime, date
 from pathlib import Path
@@ -10,9 +11,10 @@ from struct_excel.database import init_db, model_to_db
 from struct_excel.excel import normalize_excel_sheet
 from struct_excel.report import ReportService
 
-DB_FILE = Path("./dist/test.db")
+BASE = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent.parent))
+DB_FILE = BASE / "dist" / "test.db"
 DB_PATH = f"sqlite:///{DB_FILE}"
-ERR_XLSX = "./dist/err.xlsx"
+ERR_XLSX = str(BASE / "dist" / "err.xlsx")
 
 st.set_page_config(page_title="Training Report", layout="wide")
 st.title("Training Report")
@@ -31,7 +33,7 @@ if data_file and course_file:
     if st.button("Import & Generate Report", type="primary"):
         try:
             DB_FILE.unlink(missing_ok=True)
-            Path("dist").mkdir(parents=True, exist_ok=True)
+            DB_FILE.parent.mkdir(parents=True, exist_ok=True)
             entities = normalize_excel_sheet(
                 wb[sheet_name], ERR_XLSX, course_wb[course_sheet_name]
             )
