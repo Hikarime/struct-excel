@@ -1,26 +1,16 @@
-# Struct Excel
-
 This repository stores script for structuring Excel data file provided by MCMC and BlackBerry Cybersecurity Centre of Excellence (CCOE).
 
-## Installation & Usage
+## Installation
 
 ### From Release
 
 Access [GitHub Release](https://github.com/FovirDev/struct-excel/releases/latest) and download the binary matches your OS.
 
-| OS      | Binary                      |
-| ------- | --------------------------- |
-| Windows | `struct-excel-windows.exe ` |
-| Linux   | `struct-excel-linux`        |
-| macOS   | `struct-excel-macos`        |
-
-For Windows users, launch `cmd` or `powershell` and switch to the directory of `struct-excel-windows.exe`.
-
-```ps1
-.\struct-excel-windows.exe --src /path/to/source/excel
-```
-
-This will create a `dist/` directory and output results in it. There will be a `dist/err.xlsx` storing data that require further investigation due to missing values.
+| OS      | Binary                                                                                                                   |
+| ------- | ------------------------------------------------------------------------------------------------------------------------ |
+| Windows | [`struct-excel-windows.exe`](https://github.com/FovirDev/struct-excel/releases/latest/download/struct-excel-windows.exe) |
+| Linux   | [`struct-excel-linux`](https://github.com/FovirDev/struct-excel/releases/latest/download/struct-excel-linux)             |
+| macOS   | [`struct-excel-macos`](https://github.com/FovirDev/struct-excel/releases/latest/download/struct-excel-macos)             |
 
 ### From Source
 
@@ -54,6 +44,10 @@ This will create a `dist/` directory and output results in it. There will be a `
    ```bash
    streamlit run struct_excel/app.py
    ```
+
+## Usage
+
+See [docs/usage.md](docs/usage.md)
 
 ## Documentation
 
